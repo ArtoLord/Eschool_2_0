@@ -20,11 +20,5 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val login = "artgoi"
-        val password = "RhutceiljoibOw5"
-        val route = Route()
-        val sha256hex = Constants.computeHash(password)
-        val a  = TestCallbeck()
-        route.login(login, sha256hex,a)
     }
 }
