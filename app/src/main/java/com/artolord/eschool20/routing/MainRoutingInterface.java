@@ -1,14 +1,15 @@
 package com.artolord.eschool20.routing;
 
 
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
+import retrofit2.http.*;
 
 public interface MainRoutingInterface {
-
-    @Multipart
     @POST("login")
-    Call<String> login(@Part(Constants.username) String username, @Part(Constants.password) String password);
+    Call<ResponseBody> login(@Body RequestBody body);
+
+    @GET("state")
+    Call<ResponseBody> state(@Header("Cookie") String cookie);
 }
