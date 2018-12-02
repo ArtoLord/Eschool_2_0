@@ -187,7 +187,11 @@ public class Route {
                     for(int i = 0;i<array.length();i++){
                         Unit unit = new Unit();
                         unit.overMark = array.getJSONObject(i).getDouble("overMark");
-                        unit.rating = array.getJSONObject(i).getString("rating");
+                        try{
+                        unit.rating = array.getJSONObject(i).getString("rating");}
+                        catch(Exception e){
+                            unit.rating = "0";
+                        }
                         unit.unitName = array.getJSONObject(i).getString("unitName");
                         unit.totalmark = array.getJSONObject(i).getString("totalMark");
                         list.add(unit);

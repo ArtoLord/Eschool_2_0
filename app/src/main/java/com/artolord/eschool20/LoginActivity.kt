@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         override fun callback(user: State) {
             Log.e(" ",user.prsFio + " "+ user.username + " "+ user.userId)
             route!!.getPeriods(2018,getPeriodCallback(route))
-            route!!.getMarks(user.userId,97927,getMarksCallback(route))
+            route!!.getMarks(user.userId,97925,getMarksCallback(route))
         }
 
     }
