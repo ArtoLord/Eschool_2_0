@@ -17,6 +17,7 @@ public  class Constants {
         }
         return sb.toString();
     }
+    public final static String AppPref = "app_pref";
     public final static String url = "https://app.eschool.center/ec-server/";
     public final static String username = "username";
     public final static String password = "password";
