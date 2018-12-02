@@ -175,23 +175,27 @@ public class Route {
             callback.onError(Constants.CookieError);
         }
         else{
-            Call<ResponseBody> getperiod  = Api.getMarcs(cookie,userid,periodId);
-            getperiod.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    ArrayList<Unit> list  = new ArrayList<>();
-                    try {
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e("",jsonObject.toString());
-                        JSONArray array = jsonObject.getJSONArray("result");
-                        for(int i = 0;i<array.length();i++){
-                            Unit unit = new Unit();
-                            unit.overMark = array.getJSONObject(i).getDouble("overMark");
-                            unit.rating = array.getJSONObject(i).getString("rating");
-                            unit.unitName = array.getJSONObject(i).getString("unitName");
-                            unit.totalmark = array.getJSONObject(i).getString("totalMark");
-                            list.add(unit);
+        Call<ResponseBody> getperiod  = Api.getMarcs(cookie,userid,periodId);
+        getperiod.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ArrayList<Unit> list  = new ArrayList<>();
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    //Log.e("",jsonObject.toString());
+                    JSONArray array = jsonObject.getJSONArray("result");
+                    for(int i = 0;i<array.length();i++){
+                        Unit unit = new Unit();
+                        unit.overMark = array.getJSONObject(i).getDouble("overMark");
+                        try{
+                        unit.rating = array.getJSONObject(i).getString("rating");}
+                        catch(Exception e){
+                            unit.rating = "0";
                         }
+                        unit.unitName = array.getJSONObject(i).getString("unitName");
+                        unit.totalmark = array.getJSONObject(i).getString("totalMark");
+                        list.add(unit);
+                    }
 
                     } catch (Exception e) {
                         e.printStackTrace();
