@@ -3,6 +3,9 @@ package com.artolord.eschool20.view
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
@@ -16,6 +19,7 @@ import com.artolord.eschool20.routing.Route
 import com.artolord.eschool20.routing.Routing_classes.Period
 import com.artolord.eschool20.routing.Routing_classes.State
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 import kotlin.collections.ArrayList
 
 class LoginActivity : AppCompatActivity(), Callback<State> {
@@ -62,10 +66,29 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
             gravity = Gravity.CENTER
             loginTextView = editText {
                 hint = getString(R.string.login)
-
+                inputType = InputType.TYPE_CLASS_TEXT
+                singleLine = true
+                maxLines = 1
             }
             passwordTextView = editText {
                 hint = getString(R.string.password)
+                inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+                singleLine = true
+                maxLines = 1
+                transformationMethod = PasswordTransformationMethod()
+            }
+            linearLayout {
+                textView {
+                    text = getText(R.string.show_password)
+                }
+                checkBox {
+                    onCheckedChange { _, isChecked ->
+                        if (isChecked)
+                            passwordTextView.transformationMethod = HideReturnsTransformationMethod()
+                        else
+                            passwordTextView.transformationMethod = PasswordTransformationMethod()
+                    }
+                }
             }
             button {
                 text = getString(R.string.sign_in)

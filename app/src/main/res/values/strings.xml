@@ -7,4 +7,5 @@
     <string name="login_failed">Login failed</string>
     <string name="name">Name</string>
     <string name="error">Error</string>
+    <string name="show_password">Show password</string>
 </resources>
