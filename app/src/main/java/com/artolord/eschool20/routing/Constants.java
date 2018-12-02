@@ -18,7 +18,15 @@ public  class Constants {
         return sb.toString();
     }
     public final static String AppPref = "app_pref";
+    public final static String CookiePref = "cookie_pref";
+
     public final static String url = "https://app.eschool.center/ec-server/";
     public final static String username = "username";
     public final static String password = "password";
+    public final static Integer LoginError  = 1;
+    public final static Integer StateError  = 2;
+    public final static Integer PeriodError  = 3;
+    public final static Integer UnitError  = 4;
+    public final static Integer CookieError  = 5;
+
 }

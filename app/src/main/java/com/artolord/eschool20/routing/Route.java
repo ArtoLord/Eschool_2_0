@@ -1,16 +1,14 @@
 package com.artolord.eschool20.routing;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.artolord.eschool20.routing.Interfaces.GetMarksCallback;
-import com.artolord.eschool20.routing.Interfaces.GetPeriodCallback;
-import com.artolord.eschool20.routing.Interfaces.LoginCallback;
 import com.artolord.eschool20.routing.Interfaces.MainRoutingInterface;
 import com.artolord.eschool20.routing.Routing_classes.Period;
 import com.artolord.eschool20.routing.Routing_classes.State;
 import com.artolord.eschool20.routing.Routing_classes.Unit;
-import com.google.gson.JsonObject;
 
 import okhttp3.*;
 import org.json.*;
@@ -20,7 +18,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,17 +26,27 @@ public class Route {
     private MainRoutingInterface Api;
     private String cookie;
     private State UserState;
+    private Context ctx;
+    SharedPreferences sharedPreferences;
 
-    public Route(){
+    public Route(Context ctx){
         retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.url) //Базовая часть адреса
                 .addConverterFactory(GsonConverterFactory.create()) //Конвертер, необходимый для преобразования JSON'а в объекты
                 .build();
+        sharedPreferences = ctx.getSharedPreferences(Constants.AppPref,Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(Constants.AppPref)){
+            cookie = sharedPreferences.getString(Constants.AppPref,"");
+        }
+        else{
+            cookie = "null";
+        }
+
         Api = retrofit.create(MainRoutingInterface.class);
     }
 
 
-    public void login(String login, String password, final LoginCallback callback ){
+    public void login(String login, String password, final com.artolord.eschool20.routing.Interfaces.Callback<State> callback ){
 
         Call<ResponseBody> Login = Api.login(new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -52,6 +59,7 @@ public class Route {
         Login.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
                Headers hed =  response.headers();
                int i = 0;
                List<String> cookies = hed.values("Set-Cookie");
@@ -61,7 +69,12 @@ public class Route {
                }
                 //Log.e("",cookieString);
                cookie = cookieString;
-               state(cookie,callback);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Constants.AppPref,cookie);
+               state(cookie,callback);}
+               else{
+                    callback.onError(Constants.LoginError);
+                }
 
 
 
@@ -71,6 +84,8 @@ public class Route {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 //System.out.println(t);
+                callback.onError(Constants.LoginError);
+
 
             }
 
@@ -80,12 +95,16 @@ public class Route {
         });
 
     }
-    private void state(String cookies, final LoginCallback callback){
+    private void state(String cookies, final com.artolord.eschool20.routing.Interfaces.Callback<State> callback){
+        if (cookies == null){
+            callback.onError(Constants.CookieError);
+        }else{
         final State userState = new State();
         Call<ResponseBody> getstate  = Api.state(cookies);
         getstate.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
                 assert response.body() != null;
                 try {
                     JSONObject json = new JSONObject(response.body().string());
@@ -98,18 +117,29 @@ public class Route {
                     callback.callback(userState);
 
                 } catch (Exception e) {
+                    callback.onError(Constants.StateError);
                     e.printStackTrace();
                 }
 
             }
+            else{
+                    callback.onError(Constants.StateError);
+                }
+            }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                callback.onError(Constants.StateError);
 
             }
         });
     }
-    public void getPeriods(int year, final GetPeriodCallback callback){
+    }
+    public void getPeriods(int year, final com.artolord.eschool20.routing.Interfaces.Callback<ArrayList<Period>> callback){
+        if (cookie == null){
+            callback.onError(Constants.CookieError);
+        }
+        else{
         Call<ResponseBody> getperiod  = Api.getPeriod(cookie,year);
 
         getperiod.enqueue(new Callback<ResponseBody>() {
@@ -135,12 +165,16 @@ public class Route {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                callback.onError(Constants.PeriodError);
             }
         });
-    }
+    }}
 
-    public void getMarks(int userid, int periodId, final GetMarksCallback callback){
+    public void getMarks(int userid, int periodId, final com.artolord.eschool20.routing.Interfaces.Callback<ArrayList<Unit>> callback){
+        if (cookie==null){
+        callback.onError(Constants.CookieError);
+        }
+        else{
         Call<ResponseBody> getperiod  = Api.getMarcs(cookie,userid,periodId);
         getperiod.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -148,7 +182,7 @@ public class Route {
                 ArrayList<Unit> list  = new ArrayList<>();
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
-                    Log.e("",jsonObject.toString());
+                    //Log.e("",jsonObject.toString());
                     JSONArray array = jsonObject.getJSONArray("result");
                     for(int i = 0;i<array.length();i++){
                         Unit unit = new Unit();
@@ -167,8 +201,10 @@ public class Route {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                callback.onError(Constants.UnitError);
 
             }
         });
+    }
     }
 }
