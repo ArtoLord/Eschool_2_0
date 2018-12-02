@@ -10,19 +10,45 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import com.artolord.controller.Controller
 import com.artolord.eschool20.R
-import com.artolord.eschool20.routing.Interfaces.LoginCallback
 import com.artolord.eschool20.routing.Constants
-import com.artolord.eschool20.routing.Interfaces.GetMarksCallback
-import com.artolord.eschool20.routing.Interfaces.GetPeriodCallback
+import com.artolord.eschool20.routing.Interfaces.Callback
 import com.artolord.eschool20.routing.Route
 import com.artolord.eschool20.routing.Routing_classes.Period
 import com.artolord.eschool20.routing.Routing_classes.State
-import com.artolord.eschool20.routing.Routing_classes.Unit
 import org.jetbrains.anko.*
-import java.util.*
 import kotlin.collections.ArrayList
 
-class LoginActivity : AppCompatActivity(), LoginCallback, GetPeriodCallback, GetMarksCallback{
+class LoginActivity : AppCompatActivity(), Callback<State> {
+
+    class PeriodCallback : Callback<ArrayList<Period>> {
+        override fun callback(callback: ArrayList<Period>?, vararg args : Any) {
+            Controller.periodList = callback
+        }
+
+        override fun onError(errIndex: Int?) {}
+
+    }
+
+    override fun callback(callback: State?, vararg args : Any) {
+        if (callback != null)
+        {
+            Controller.state = callback
+            Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
+            Controller.route?.getPeriods(2018, PeriodCallback())
+            Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
+            doAsync {
+                while ((Controller.periodList?.size ?: 0) == 0);
+                startActivity<MarksActivity>()
+            }
+
+        }
+        else
+        {
+            loginFailed()
+        }
+    }
+
+    override fun onError(errIndex: Int?) {}
 
     private lateinit var rootLinearLayout: LinearLayout
     private lateinit var loginTextView : EditText
@@ -30,7 +56,7 @@ class LoginActivity : AppCompatActivity(), LoginCallback, GetPeriodCallback, Get
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Controller.route == null)
-            Controller.route = Route()
+            Controller.route = Route(this)
         super.onCreate(savedInstanceState)
         rootLinearLayout = verticalLayout {
             gravity = Gravity.CENTER
@@ -68,34 +94,6 @@ class LoginActivity : AppCompatActivity(), LoginCallback, GetPeriodCallback, Get
                 }
             }
         }
-    }
-
-    override fun loginCallback(user: State?) {
-        if (user != null)
-        {
-            Controller.state = user
-            Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
-            Controller.route?.getPeriods(2018, this)
-            Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
-            doAsync {
-                while ((Controller.periodList?.size ?: 0) == 0);
-                startActivity<MarksActivity>()
-            }
-
-        }
-        else
-        {
-            loginFailed()
-        }
-    }
-
-    override fun getPeriodCallback(arrayList: ArrayList<Period>?) {
-        Controller.periodList = arrayList
-    }
-
-    override fun getMarksCallback(periodId : Int, list: ArrayList<Unit>?) {
-        val alist : ArrayList<Unit> = list ?: arrayListOf()
-        Controller.unitByPersonMap?.set(periodId, alist)
     }
 
     private fun loginFailed() {

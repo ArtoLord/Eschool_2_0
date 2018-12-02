@@ -17,6 +17,4 @@ object Controller {
         periodList = null
         unitByPersonMap = null
     }
-
-    fun initRoute() {route = Route()}
 }

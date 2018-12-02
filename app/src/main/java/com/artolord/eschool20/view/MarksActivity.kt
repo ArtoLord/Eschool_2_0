@@ -7,17 +7,23 @@ import android.view.View
 import android.widget.*
 import com.artolord.controller.Controller
 import com.artolord.eschool20.R
-import com.artolord.eschool20.routing.Interfaces.GetMarksCallback
+import com.artolord.eschool20.routing.Interfaces.Callback
 import com.artolord.eschool20.routing.Routing_classes.Unit
 import org.jetbrains.anko.*
 import java.util.*
+import kotlin.collections.ArrayList
 
-class MarksActivity : AppCompatActivity(), GetMarksCallback, AdapterView.OnItemSelectedListener {
+class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterView.OnItemSelectedListener {
 
-    override fun getMarksCallback(periodId : Int, list: ArrayList<Unit>?) {
-        val alist : ArrayList<Unit> = list ?: arrayListOf()
+
+    override fun callback(callback: ArrayList<Unit>?, vararg args : Any) {
+        val periodId = if (args[0] is Int) args[0] as Int else 0
+        val alist : ArrayList<Unit> = callback ?: arrayListOf()
+        Log.d("Logger2", "$periodId ${alist.map { it.overMark }.apply { if(size > 0) reduce { acc, s ->  acc + s}}}")
         Controller.unitByPersonMap?.set(periodId, alist)
     }
+
+    override fun onError(errIndex: Int?) {}
 
     private var currentPeriod : Int = 0
     private lateinit var listAdapter: ArrayAdapter<String>
@@ -77,6 +83,12 @@ class MarksActivity : AppCompatActivity(), GetMarksCallback, AdapterView.OnItemS
         listAdapter = ArrayAdapter(this@MarksActivity, android.R.layout.simple_spinner_item, Controller.unitByPersonMap?.get(currentPeriod)?.map { "${it.unitName} ${it.totalmark} ${it.overMark}" } ?: arrayListOf())
         listAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         Log.d("Logger", "${currentPeriod} Update ${Controller.unitByPersonMap?.get(currentPeriod)?.size}")
+        Controller.periodList?.forEach {
+            Log.d("Logger", "Id : ${it.periodId}")
+            Controller.unitByPersonMap?.get(it.periodId)?.forEach {
+                Log.d("Logger", "${it.unitName} ${it.overMark} ${it.rating}")
+            }
+        }
         list.adapter = listAdapter
     }
 }

@@ -4,6 +4,8 @@ import com.artolord.eschool20.routing.Routing_classes.Unit;
 
 import java.util.ArrayList;
 
-public interface GetMarksCallback {
-    void getMarksCallback(int periodId, ArrayList<Unit> list);
+
+public interface Callback<T> {
+    void callback (T callback, Object... args);
+    void onError(Integer errIndex);
 }
