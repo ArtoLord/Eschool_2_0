@@ -223,7 +223,11 @@ public class Route {
                         JSONArray array = jsonObject.getJSONArray("result");
                         for(int i = 0;i<array.length();i++){
                             Mark mark = new Mark();
-                            mark.subject = array.getJSONObject(i).getString("subject");
+                            try{
+                            mark.subject = array.getJSONObject(i).getString("subject");}
+                            catch (Exception e){
+                                mark.subject = "";
+                            }
                             try{
                                 mark.markVal = array.getJSONObject(i).getInt("markVal");}
                             catch(Exception e){
