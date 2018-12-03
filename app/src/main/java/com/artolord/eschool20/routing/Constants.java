@@ -28,5 +28,6 @@ public  class Constants {
     public final static Integer PeriodError  = 3;
     public final static Integer UnitError  = 4;
     public final static Integer CookieError  = 5;
+    public final static Integer MarkError  = 5;
 
 }

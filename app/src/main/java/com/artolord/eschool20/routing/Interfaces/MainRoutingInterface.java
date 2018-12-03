@@ -19,4 +19,8 @@ public interface MainRoutingInterface {
     @GET("student/getDiaryUnits/?")
     //https://app.eschool.center/ec-server/student/getDiaryUnits/?userId=62447&eiId=97927
     Call<ResponseBody> getMarcs(@Header("Cookie") String cookie,@Query("userId")int userId,@Query("eiId")int eiId);
+
+    //https://app.eschool.center/ec-server/student/getDiaryPeriod/?userId=62447&eiId=97927
+    @GET("student/getDiaryPeriod/?")
+    Call<ResponseBody> getMarcsWithWights(@Header("Cookie") String cookie,@Query("userId")int userId,@Query("eiId")int eiId);
 }
