@@ -11,12 +11,26 @@ import android.widget.*
 import com.artolord.controller.Controller
 import com.artolord.eschool20.R
 import com.artolord.eschool20.routing.Interfaces.Callback
+import com.artolord.eschool20.routing.Routing_classes.Mark
 import com.artolord.eschool20.routing.Routing_classes.Unit
 import com.artolord.eschool20.view.recyclerView
 import org.jetbrains.anko.*
 import kotlin.collections.ArrayList
 
 class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterView.OnItemSelectedListener {
+
+
+    inner class MarkListCallback : Callback<ArrayList<Mark>> {
+        override fun onError(errIndex: Int?) {}
+
+        override fun callback(callback: ArrayList<Mark>?, vararg args: Any?) {
+            Log.d("Logger5", "hell")
+            val periodId : Int = (args[0] as Int?) ?: 0
+            Controller.marksList?.set(periodId, callback ?: arrayListOf())
+            Controller.marksList?.get(periodId)?.sortedBy { a -> a.subject }?.forEach{ mark -> Log.d("Logger5", "${mark.subject} ${mark.markVal} ${mark.mktWt}")}
+        }
+
+    }
 
 
     override fun callback(callback: ArrayList<Unit>?, vararg args : Any) {
@@ -60,7 +74,7 @@ class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterVie
             while ((Controller.periodList?.size ?: 0) == 0 || (Controller.unitByPersonMap?.get(currentPeriod)?.size ?: 0) == 0);
             uiThread {
                 Log.d("Logger3", list.adapter.itemCount.toString())
-
+                Controller.route?.getMarksWithWights(Controller.state?.userId ?: 0, currentPeriod, MarkListCallback())
                 updateList()
             }
         }
@@ -75,6 +89,7 @@ class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterVie
         println("$p2 $currentPeriod")
         if (!Controller.unitByPersonMap!!.containsKey(currentPeriod))
             Controller.route?.getMarks(Controller.state?.userId ?: 0, currentPeriod, this@MarksActivity)
+        Controller.route?.getMarksWithWights(Controller.state?.userId ?: 0, currentPeriod, MarkListCallback())
         doAsync {
             while ((Controller.periodList?.size ?: 0) == 0 || (Controller.unitByPersonMap?.get(currentPeriod)?.size ?: 0) == 0);
             uiThread {
