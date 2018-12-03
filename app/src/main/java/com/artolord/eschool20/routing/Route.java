@@ -65,7 +65,7 @@ public class Route {
                     }
                     //Log.e("",cookieString);
                     cookie = cookieString;
-                    state(cookie,callback);}
+                    state(callback);}
                 else{
                     callback.onError(Constants.LoginError);
                 }
@@ -89,7 +89,8 @@ public class Route {
         });
 
     }
-    private void state(String cookies, final com.artolord.eschool20.routing.Interfaces.Callback<State> callback){
+    public void state( final com.artolord.eschool20.routing.Interfaces.Callback<State> callback){
+        String cookies = cookie;
         if (cookies == null){
             callback.onError(Constants.CookieError);
         }else{
@@ -222,7 +223,11 @@ public class Route {
                         JSONArray array = jsonObject.getJSONArray("result");
                         for(int i = 0;i<array.length();i++){
                             Mark mark = new Mark();
-                            mark.subject = array.getJSONObject(i).getString("subject");
+                            try{
+                            mark.subject = array.getJSONObject(i).getString("subject");}
+                            catch (Exception e){
+                                mark.subject = "";
+                            }
                             try{
                                 mark.markVal = array.getJSONObject(i).getInt("markVal");}
                             catch(Exception e){
@@ -254,7 +259,9 @@ public class Route {
     public void load(Context ctx){
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(Constants.AppPref,Context.MODE_PRIVATE);
         if (sharedPreferences.contains(Constants.AppPref)){
+
             cookie = sharedPreferences.getString(Constants.AppPref,"");
+            Log.e("",cookie);
         }
         else{
             cookie = null;
@@ -264,6 +271,7 @@ public class Route {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(Constants.AppPref,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.AppPref,cookie);
+        editor.commit();
 
     }
     public boolean isCookieNull(){

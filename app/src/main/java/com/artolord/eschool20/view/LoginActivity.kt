@@ -1,8 +1,8 @@
 package com.artolord.eschool20.view
 
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -21,7 +21,6 @@ import com.artolord.eschool20.routing.Routing_classes.State
 import com.artolord.eschool20.view.marks.MarksActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
-import kotlin.collections.ArrayList
 
 class LoginActivity : AppCompatActivity(), Callback<State> {
 
@@ -40,7 +39,9 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
         if (callback != null)
         {
             Controller.state = callback
+
             Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
+            Controller.route!!.save(this)
             Controller.route?.getPeriods(2018, PeriodCallback())
             Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
             doAsync {
@@ -68,6 +69,10 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
         if (Controller.route == null)
             Controller.route = Route()
         super.onCreate(savedInstanceState)
+        Controller.route!!.load(this) //Загрузка cookie
+        if (!Controller.route!!.isCookieNull){
+            Controller.route!!.state(this@LoginActivity) //Автоматический вход
+        }
         rootLinearLayout = verticalLayout {
             gravity = Gravity.CENTER
             loginTextView = editText {
