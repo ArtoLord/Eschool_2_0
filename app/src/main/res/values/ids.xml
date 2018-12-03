@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="subject_name_text_view" type="id"/>
+    <item name="subject_over_mark_text_view" type="id"/>
+    <item name="subject_place_text_view" type="id"/>
+</resources>

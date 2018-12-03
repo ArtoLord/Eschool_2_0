@@ -18,18 +18,21 @@ import com.artolord.eschool20.routing.Interfaces.Callback
 import com.artolord.eschool20.routing.Route
 import com.artolord.eschool20.routing.Routing_classes.Period
 import com.artolord.eschool20.routing.Routing_classes.State
+import com.artolord.eschool20.view.marks.MarksActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 import kotlin.collections.ArrayList
 
 class LoginActivity : AppCompatActivity(), Callback<State> {
 
-    class PeriodCallback : Callback<ArrayList<Period>> {
+    inner class PeriodCallback : Callback<ArrayList<Period>> {
         override fun callback(callback: ArrayList<Period>?, vararg args : Any) {
             Controller.periodList = callback
         }
 
-        override fun onError(errIndex: Int?) {}
+        override fun onError(errIndex: Int?) {
+            loginFailed()
+        }
 
     }
 
@@ -52,11 +55,14 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
         }
     }
 
-    override fun onError(errIndex: Int?) {}
+    override fun onError(errIndex: Int?) {
+        loginFailed()
+    }
 
     private lateinit var rootLinearLayout: LinearLayout
     private lateinit var loginTextView : EditText
     private lateinit var passwordTextView : EditText
+    private var isFailed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Controller.route == null)
@@ -121,8 +127,9 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
 
     private fun loginFailed() {
         Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show()
-        rootLinearLayout.apply {
+        if (!isFailed) rootLinearLayout.apply {
             textView(R.string.login_failed)
         }
+        isFailed = true
     }
 }

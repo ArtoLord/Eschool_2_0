@@ -1,16 +1,19 @@
-package com.artolord.eschool20.view
+package com.artolord.eschool20.view.marks
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import com.artolord.controller.Controller
 import com.artolord.eschool20.R
 import com.artolord.eschool20.routing.Interfaces.Callback
 import com.artolord.eschool20.routing.Routing_classes.Unit
+import com.artolord.eschool20.view.recyclerView
 import org.jetbrains.anko.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterView.OnItemSelectedListener {
@@ -21,13 +24,13 @@ class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterVie
         val alist : ArrayList<Unit> = callback ?: arrayListOf()
         Log.d("Logger2", "$periodId ${alist.map { it.overMark }.apply { if(size > 0) reduce { acc, s ->  acc + s}}}")
         Controller.unitByPersonMap?.set(periodId, alist)
+        updateList()
     }
 
     override fun onError(errIndex: Int?) {}
 
     private var currentPeriod : Int = 0
-    private lateinit var listAdapter: ArrayAdapter<String>
-    private lateinit var list : ListView
+    private lateinit var list : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +49,18 @@ class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterVie
                 this.adapter = adapter
                 onItemSelectedListener = this@MarksActivity
             }
-            listAdapter = ArrayAdapter(this@MarksActivity, android.R.layout.simple_spinner_item, Controller.unitByPersonMap?.get(currentPeriod)?.map { "${it.unitName} ${it.totalmark} ${it.overMark}" } ?: arrayListOf())
-            listAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            list = listView {
-                this.adapter = listAdapter
-            }
+            list = recyclerView {}.apply {
+                layoutManager = LinearLayoutManager(this@MarksActivity, LinearLayout.VERTICAL, false)
+                this.adapter = RecyclerViewAdapter(periodID = currentPeriod)
+                Log.d("Logger3", this.adapter.itemCount.toString() + "g")
+            }.lparams(ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         }
 
         doAsync {
             while ((Controller.periodList?.size ?: 0) == 0 || (Controller.unitByPersonMap?.get(currentPeriod)?.size ?: 0) == 0);
             uiThread {
+                Log.d("Logger3", list.adapter.itemCount.toString())
+
                 updateList()
             }
         }
@@ -80,15 +85,18 @@ class MarksActivity : AppCompatActivity(), Callback<ArrayList<Unit>>, AdapterVie
 
     private fun updateList()
     {
-        listAdapter = ArrayAdapter(this@MarksActivity, android.R.layout.simple_spinner_item, Controller.unitByPersonMap?.get(currentPeriod)?.map { "${it.unitName} ${it.totalmark} ${it.overMark}" } ?: arrayListOf())
-        listAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        Log.d("Logger", "${currentPeriod} Update ${Controller.unitByPersonMap?.get(currentPeriod)?.size}")
         Controller.periodList?.forEach {
             Log.d("Logger", "Id : ${it.periodId}")
             Controller.unitByPersonMap?.get(it.periodId)?.forEach {
                 Log.d("Logger", "${it.unitName} ${it.overMark} ${it.rating}")
             }
         }
-        list.adapter = listAdapter
+        Log.d("Logger4", "${(list.adapter as RecyclerViewAdapter).periodID}")
+        list.adapter = RecyclerViewAdapter(currentPeriod)
+        (list.adapter as RecyclerViewAdapter).apply {
+            periodID = currentPeriod
+            notifyDataSetChanged()
+        }
+
     }
 }
