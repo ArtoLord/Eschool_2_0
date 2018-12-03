@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.artolord.controller.Controller
+import com.artolord.eschool20.controller.Controller
 import com.artolord.eschool20.R
 import com.artolord.eschool20.routing.Interfaces.Callback
 import com.artolord.eschool20.routing.Routing_classes.Mark

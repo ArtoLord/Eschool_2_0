@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.artolord.controller.Controller
+import com.artolord.eschool20.controller.Controller
 import com.artolord.eschool20.R
 import org.jetbrains.anko.appcompat.v7.linearLayoutCompat
 import org.jetbrains.anko.applyRecursively

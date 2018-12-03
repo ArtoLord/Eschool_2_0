@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.artolord.controller.Controller
+import com.artolord.eschool20.controller.Controller
 import com.artolord.eschool20.R
 import com.artolord.eschool20.routing.Constants
 import com.artolord.eschool20.routing.Interfaces.Callback

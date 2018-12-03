@@ -1,4 +1,4 @@
-package com.artolord.controller
+package com.artolord.eschool20.controller
 
 import com.artolord.eschool20.routing.Route
 import com.artolord.eschool20.routing.Routing_classes.Mark
