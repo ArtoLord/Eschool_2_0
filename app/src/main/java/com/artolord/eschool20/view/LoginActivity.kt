@@ -27,6 +27,7 @@ import kotlin.collections.ArrayList
 
 class LoginActivity : AppCompatActivity(), Callback<State> {
 
+
     class PeriodCallback : Callback<ArrayList<Period>> {
         override fun callback(callback: ArrayList<Period>?, vararg args : Any) {
             Controller.periodList = callback
@@ -40,6 +41,7 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
         if (callback != null)
         {
             Controller.state = callback
+
             Toast.makeText(this, R.string.successful_login, Toast.LENGTH_SHORT).show()
             Controller.route!!.save(this)
             Controller.route?.getPeriods(2018, PeriodCallback())
