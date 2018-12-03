@@ -1,4 +1,4 @@
-## Документация по классу Route(Context ctx)
+## Документация по классу Route()
 ### Login
 ``` Java
 Route.login(String username, String password, Callback<State> callback)
@@ -14,7 +14,7 @@ public class State {
 ```
 ### getPeriods
 ``` Java
-Route.getPeriods(int userid, int periodId, Callback<ArrayList<Unit>> callback)
+Route.getPeriods(int yearNumber, Callback<ArrayList<Period>> callback)
 ```
 Класс Period содержит информацию о периоде:
 ``` Java
@@ -26,7 +26,7 @@ public class Period {
 ```
 ### getMarks
 ``` Java
-Route.getMarks(int yearNumber, Callback<ArrayList<Period>> callback)
+Route.getMarks(int userid, int periodId, Callback<ArrayList<Unit>> callback)
 ```
 Класс Unit содержит информацию об оценках по данному предмету:
 ``` Java
@@ -37,6 +37,22 @@ public class Unit {
     public String totalmark; // итоговая оценка
 }
 ```
+### getMarksWithWights
+``` Java
+Route.getMarksWithWights(int userid, int periodId, Callback<ArrayList<Mark>> callback)
+```
+Класс Mark содержит информацию о конкретной оценке:
+``` Java
+public class Mark {
+    public Integer markVal;
+    public String subject;
+    public Double mktWt;
+    public Integer unitId;
+}
+```
+### save(Context) и load(Context)
+Эти функции получаю из `SharedPreferences` информацию о cookie и сохраняют ее в классе `Route` и наобарот. 
+>Вызывайте их после того, как инициализируете класс `Route` или получите информацию о пользователе.
 ### Callback < T >
 Интерфейс, который должен быть реализован вашим классом, который вы передаете в функцию класса Route.
 Этот класс должен реализовать функцию `callback(T)`, которая вызывается при успешном запросе, и функцию `onError(int errorId)`,

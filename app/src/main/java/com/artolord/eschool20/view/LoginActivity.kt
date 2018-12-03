@@ -66,7 +66,7 @@ class LoginActivity : AppCompatActivity(), Callback<State> {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Controller.route == null)
-            Controller.route = Route(this)
+            Controller.route = Route()
         super.onCreate(savedInstanceState)
         rootLinearLayout = verticalLayout {
             gravity = Gravity.CENTER
