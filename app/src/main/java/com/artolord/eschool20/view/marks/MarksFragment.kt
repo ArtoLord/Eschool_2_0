@@ -20,29 +20,29 @@ import com.artolord.eschool20.view.recyclerView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onItemClick
 import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.onUiThread
+import org.jetbrains.anko.support.v4.runOnUiThread
+import org.jetbrains.anko.support.v4.uiThread
 
 class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    private var currentPeriod: Int = 0
+    private var currentPeriod: Int = Controller.getPeriod()
     private lateinit var list: RecyclerView
     private lateinit var listAdapter: ArrayAdapter<String>
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
-            Log.d("Logger6", "Create")
-            currentPeriod = Controller.periodList?.get(0)?.periodId ?: 0
-            Controller.route?.getMarks(Controller.state?.userId
-                    ?: 0, Controller.periodList?.get(0)?.periodId ?: 0, UnitListCallback())
+
+            Controller.uploadUnits(currentPeriod, ::onUnitCallback, ::onFailed)
 
             verticalLayout {
                 linearLayout {
                     orientation = LinearLayout.HORIZONTAL
                     textView(R.string.name)
-                    textView(": ${Controller.state?.prsFio ?: getString(R.string.error)}")
+                    textView(": ${Controller.state.prsFio ?: getString(R.string.error)}")
                 }
-                val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, Controller.periodList?.filter { it.isStudy }?.map { it.periodName }
-                        ?: arrayListOf())
+                val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, Controller.periodList.filter { it.isStudy }.map { it.periodName })
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinner {
                     this.adapter = adapter
@@ -54,16 +54,10 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }.lparams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
             }
 
-            doAsync {
-                while ((Controller.periodList?.size
-                                ?: 0) == 0 || (Controller.unitByPersonMap?.get(currentPeriod)?.size
-                                ?: 0) == 0);
-                uiThread {
-                    Controller.route?.getMarksWithWights(Controller.state?.userId
-                            ?: 0, currentPeriod, MarkListCallback())
+            runOnUiThread {
+                    Controller.uploadMarks(currentPeriod, ::onMarkCallback, ::onFailed)
                     updateList()
                 }
-            }
         }.view
     }
 
@@ -75,44 +69,25 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    inner class MarkListCallback : Callback<ArrayList<Mark>> {
-        override fun onError(errIndex: Int?) {}
-
-        override fun callback(callback: ArrayList<Mark>?, vararg args: Any?) {
-            val periodId: Int = (args[0] as Int?) ?: 0
-            Controller.marksList?.set(periodId, callback ?: arrayListOf())
-        }
-
+    private fun onUnitCallback(callback: ArrayList<Unit>) {
+        val aList : ArrayList<com.artolord.eschool20.routing.Routing_classes.Unit> = callback
+        Controller.unitByPersonMap[currentPeriod] = aList
+        updateList()
     }
 
-    inner class UnitListCallback : Callback<ArrayList<Unit>> {
-        override fun callback(callback: ArrayList<Unit>?, vararg args : Any) {
-            val periodId = if (args[0] is Int) args[0] as Int else 0
-            val aList : ArrayList<com.artolord.eschool20.routing.Routing_classes.Unit> = callback ?: arrayListOf()
-            Controller.unitByPersonMap?.set(periodId, aList)
-            updateList()
-        }
-
-        override fun onError(errIndex: Int?) {}
+    private fun onMarkCallback(callback: ArrayList<Mark>) {
+        Controller.marksList[currentPeriod] = callback
     }
+
+    private fun onFailed() {}
 
     override fun onNothingSelected(p0: AdapterView<*>?) {}
 
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        currentPeriod = Controller.periodList?.get(p2)?.periodId ?: 0
-        Log.d("Logger", " $currentPeriod")
+        currentPeriod = Controller.periodList[p2].periodId
 
-        println("$p2 $currentPeriod")
-        if (!Controller.unitByPersonMap!!.containsKey(currentPeriod))
-            Controller.route?.getMarks(Controller.state?.userId ?: 0, currentPeriod, UnitListCallback())
-        doAsync {
-            while ((Controller.periodList?.size ?: 0) == 0 || (Controller.unitByPersonMap?.get(currentPeriod)?.size ?: 0) == 0);
-            uiThread {
-                updateList()
-            }
-        }
+        if (!Controller.unitByPersonMap.containsKey(currentPeriod))
+            Controller.uploadUnits(currentPeriod, ::onUnitCallback, ::onFailed)
     }
-
-
 }
