@@ -2,30 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
-            android:id="all"
+            android:id="@+id/all"
             android:title="@string/itog" />
         <item
-            android:id="schedule"
+            android:id="@+id/schedule"
             android:title="@string/schedule"
             android:icon="@drawable/baseline_calendar_today_black_24"
             />
         <item
-            android:id="homework"
+            android:id="@+id/homework"
             android:title="@string/homework"
             android:icon="@drawable/baseline_home_black_24"/>
         <item
-            android:id="messages"
+            android:id="@+id/messages"
             android:title="@string/messages"
             android:icon="@drawable/baseline_chat_black_24"/>
         <item
-            android:id="statistics"
+            android:id="@+id/statistics"
             android:title="@string/statistics"
             android:icon="@drawable/baseline_sort_black_24"/>
     </group>
     <item
-        android:id="settings"
+        android:id="@+id/settings"
         android:title="@string/settings" />
     <item
-        android:id="exit"
+        android:id="@+id/exit"
         android:title="@string/exit" />
 </menu>
