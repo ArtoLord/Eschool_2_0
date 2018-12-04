@@ -3,4 +3,5 @@
     <item name="subject_name_text_view" type="id"/>
     <item name="subject_over_mark_text_view" type="id"/>
     <item name="subject_place_text_view" type="id"/>
+    <item name="marks_fragment" type="id"/>
 </resources>

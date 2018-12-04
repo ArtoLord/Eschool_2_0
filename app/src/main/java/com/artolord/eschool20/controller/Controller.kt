@@ -20,4 +20,6 @@ object Controller {
         unitByPersonMap = null
         marksList = null
     }
+
+    fun getMarks(periodId : Int) = marksList?.get(periodId) ?: arrayListOf()
 }
