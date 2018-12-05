@@ -2,8 +2,6 @@ package com.artolord.eschool20.view.marks
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +12,11 @@ import com.artolord.eschool20.routing.Routing_classes.Mark
 import com.artolord.eschool20.routing.Routing_classes.Unit
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.toast
 
 class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var currentPeriod: Int = Controller.getPeriod()
-    private lateinit var list: RecyclerView
     private lateinit var table : TableLayout
 
 
@@ -46,9 +44,6 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
 
             }
-
-            Controller.uploadMarks(currentPeriod, ::onMarkCallback, ::onFailed)
-            updateList()
         }.view
     }
 
@@ -70,7 +65,6 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         }
                         it.value.forEach { mark ->
                             textView {
-                                Log.d("Logger7", mark.markVal.toString())
                                 text = mark.markVal.toString()
                             }
                         }
@@ -89,23 +83,23 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun onUnitCallback(callback: ArrayList<Unit>) {
-        val aList : ArrayList<com.artolord.eschool20.routing.Routing_classes.Unit> = callback
-        Controller.unitByPersonMap[currentPeriod] = aList
-        updateList()
+        Controller.unitByPersonMap[currentPeriod] = callback
+        Controller.uploadMarks(currentPeriod, ::onMarkCallback, ::onFailed)
     }
 
     private fun onMarkCallback(callback: ArrayList<Mark>) {
         updateList()
     }
 
-    private fun onFailed() {}
+    private fun onFailed() {
+        toast("Fail")
+    }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {}
 
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         currentPeriod = Controller.periodList[p2].periodId
-
         Controller.uploadUnits(currentPeriod, ::onUnitCallback, ::onFailed)
     }
 }

@@ -12,7 +12,7 @@ import com.artolord.eschool20.routing.Routing_classes.Unit
 object Controller {
     var route : Route = Route()
     var state : State = State()
-    var periodList : ArrayList<Period> = arrayListOf()
+    var periodList : List<Period> = arrayListOf()
     var unitByPersonMap : MutableMap<Int, ArrayList<Unit>> = mutableMapOf()
     var marksList : MutableMap<Int, ArrayList<Mark>> = mutableMapOf()
     var periodByPeriodId : MutableMap<Int, Period> = mutableMapOf()
@@ -37,7 +37,7 @@ object Controller {
 
     fun getMarks(periodId : Int) = marksList[periodId] ?: arrayListOf()
 
-    fun uploadPeriods(year : Int, onCallback : (ArrayList<Period>) -> kotlin.Unit, onFailure : () -> kotlin.Unit)  {
+    fun uploadPeriods(year : Int, onCallback : (List<Period>) -> kotlin.Unit, onFailure : () -> kotlin.Unit)  {
         route.getPeriods(year, PeriodCallback(onCallback, onFailure))
     }
 
@@ -58,14 +58,15 @@ object Controller {
         route.login(login, hash, LoginCallback(onCallback, onFailure))
     }
 
-    class PeriodCallback(private val onCallback : (ArrayList<Period>) -> kotlin.Unit, private val onFailure : () -> kotlin.Unit) : Callback<ArrayList<Period>> {
+    class PeriodCallback(private val onCallback : (List<Period>) -> kotlin.Unit, private val onFailure : () -> kotlin.Unit) : Callback<ArrayList<Period>> {
         override fun callback(callback: ArrayList<Period>?, vararg args: Any?) {
             if (callback != null) {
-                Controller.periodList = callback
-                callback.forEach {
+                val periods = callback.filter { it.isStudy }
+                Controller.periodList = periods.toMutableList()
+                periods.forEach {
                     Controller.periodByPeriodId[it.periodId] = it
                 }
-                onCallback(callback)
+                onCallback(periods)
             }
             else onFailure()
         }
