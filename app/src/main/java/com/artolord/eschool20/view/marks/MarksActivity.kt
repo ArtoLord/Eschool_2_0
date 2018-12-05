@@ -3,6 +3,9 @@ package com.artolord.eschool20.view.marks
 import android.app.FragmentManager
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.design.widget.NavigationView
+import android.support.v4.app.FragmentTransaction
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -23,12 +26,19 @@ class MarksActivity : AppCompatActivity() {
     private val marksFragment = MarksFragment()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        linearLayout {
-            orientation = LinearLayout.VERTICAL
-            id = R.id.marks_fragment
-            supportFragmentManager.beginTransaction().replace(R.id.marks_fragment, marksFragment).commit()
+        setContentView(R.layout.main_activity)
 
+        var mDrawerLayout:DrawerLayout = findViewById(R.id.drawer_layout)
+
+        val navigationView: NavigationView = findViewById(R.id.navigation_view)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            menuItem.isChecked = true
+            mDrawerLayout.closeDrawers()
+
+            true
         }
+        supportFragmentManager.beginTransaction().replace(R.id.change_me, marksFragment).commit()
+
     }
 
     override fun onStart() {
