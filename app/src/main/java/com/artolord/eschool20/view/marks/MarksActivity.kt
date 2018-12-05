@@ -1,23 +1,10 @@
 package com.artolord.eschool20.view.marks
 
-import android.app.FragmentManager
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.*
-import com.artolord.eschool20.controller.Controller
+import android.widget.LinearLayout
 import com.artolord.eschool20.R
-import com.artolord.eschool20.routing.Interfaces.Callback
-import com.artolord.eschool20.routing.Routing_classes.Mark
-import com.artolord.eschool20.routing.Routing_classes.Unit
-import com.artolord.eschool20.view.recyclerView
-import org.jetbrains.anko.*
-import kotlin.collections.ArrayList
+import org.jetbrains.anko.linearLayout
 
 class MarksActivity : AppCompatActivity() {
     private val marksFragment = MarksFragment()

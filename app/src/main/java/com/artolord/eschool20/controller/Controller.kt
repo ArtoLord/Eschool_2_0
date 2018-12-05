@@ -15,6 +15,8 @@ object Controller {
     var periodList : ArrayList<Period> = arrayListOf()
     var unitByPersonMap : MutableMap<Int, ArrayList<Unit>> = mutableMapOf()
     var marksList : MutableMap<Int, ArrayList<Mark>> = mutableMapOf()
+    var periodByPeriodId : MutableMap<Int, Period> = mutableMapOf()
+    var unitByUnitId : MutableMap<Int, Unit> = mutableMapOf()
 
     fun exit() {
         route = Route()
@@ -22,6 +24,8 @@ object Controller {
         periodList = arrayListOf()
         unitByPersonMap = mutableMapOf()
         marksList = mutableMapOf()
+        periodByPeriodId = mutableMapOf()
+        unitByUnitId = mutableMapOf()
     }
 
     fun load(context : Context, onCallback : (State) -> kotlin.Unit) {
@@ -58,6 +62,9 @@ object Controller {
         override fun callback(callback: ArrayList<Period>?, vararg args: Any?) {
             if (callback != null) {
                 Controller.periodList = callback
+                callback.forEach {
+                    Controller.periodByPeriodId[it.periodId] = it
+                }
                 onCallback(callback)
             }
             else onFailure()
@@ -80,6 +87,9 @@ object Controller {
             if (callback != null) {
                 val periodId = (args[0] as Int?) ?: 0
                 Controller.unitByPersonMap[periodId] = callback
+                callback.forEach {
+                    Controller.unitByUnitId[it.unitId] = it
+                }
                 onCallback(callback)
             }
             else onFailure()
