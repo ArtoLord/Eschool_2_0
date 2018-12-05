@@ -10,4 +10,11 @@
     <string name="show_password">Show password</string>
     <string name="over_mark">Over mark\u0020</string>
     <string name="place">Place\u0020</string>
+    <string name="itog">Итоговые оценки</string>
+    <string name="schedule">Расписание</string>
+    <string name="homework">Домашнее задание</string>
+    <string name="messages">Сообщения</string>
+    <string name="statistics">Статистика</string>
+    <string name="settings">Настройки</string>
+    <string name="exit">Выход</string>
 </resources>
