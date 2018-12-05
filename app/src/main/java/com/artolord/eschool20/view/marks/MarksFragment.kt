@@ -7,10 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TableLayout
+import android.widget.*
 import com.artolord.eschool20.R
 import com.artolord.eschool20.controller.Controller
 import com.artolord.eschool20.routing.Routing_classes.Mark
@@ -42,9 +39,9 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     this.adapter = adapter
                     onItemSelectedListener = this@MarksFragment
                 }
-                horizontalScrollView {
-                    table = tableLayout {
-
+                scrollView {
+                    horizontalScrollView {
+                        table = tableLayout {}
                     }
                 }
 
@@ -56,28 +53,33 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun updateList() {
-//        list.adapter = RecyclerViewAdapter(currentPeriod)
-//        (list.adapter as RecyclerViewAdapter).apply {
-//            periodID = currentPeriod
-//            notifyDataSetChanged()
-//        }
         table.removeAllViews()
         Controller.getMarks(currentPeriod).groupBy { it.unitId }.forEach {
-            table.apply {
-                tableRow {
-                    textView {
-                        text = Controller.unitByUnitId[it.key ?: 0]?.unitName
-                    }
-                    textView {
-                        text = Controller.unitByUnitId[it.key ?: 0]?.overMark.toString()
-                    }
-                    textView {
-                        text = Controller.unitByUnitId[it.key ?: 0]?.rating
-                    }
-                    it.value.forEach { mark ->
+            val unit = Controller.unitByUnitId[it.key ?: 0]
+            if (unit != null) {
+                table.apply {
+                    tableRow {
                         textView {
-                            Log.d("Logger7", mark.markVal.toString())
-                            text = mark.markVal.toString()
+                            text = unit.unitName
+                        }
+                        textView {
+                            text = unit.overMark.toString()
+                        }
+                        textView {
+                            text = unit.rating
+                        }
+                        it.value.forEach { mark ->
+                            textView {
+                                Log.d("Logger7", mark.markVal.toString())
+                                text = mark.markVal.toString()
+                            }
+                        }
+                    }
+                }.applyRecursively { v ->
+                    when (v) {
+                        is TextView -> {
+                            v.textSize = v.sp(8).toFloat()
+                            v.minWidth = v.dip(30)
                         }
                     }
                 }
@@ -93,7 +95,7 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun onMarkCallback(callback: ArrayList<Mark>) {
-        Controller.marksList[currentPeriod] = callback
+        updateList()
     }
 
     private fun onFailed() {}
