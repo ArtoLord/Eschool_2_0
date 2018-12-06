@@ -1,5 +1,7 @@
 package com.artolord.eschool20.view.marks
 
+import android.graphics.Color
+import android.graphics.drawable.shapes.Shape
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +15,7 @@ import com.artolord.eschool20.routing.Routing_classes.Unit
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.toast
+import top.defaults.drawabletoolbox.DrawableBuilder
 
 class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -58,7 +61,8 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             text = unit.unitName
                         }
                         textView {
-                            text = unit.overMark.toString()
+                            val overMark = Controller.getOverMark(currentPeriod, unit.unitId)
+                            text = "%.2f".format(overMark)
                         }
                         textView {
                             text = unit.rating
@@ -74,6 +78,13 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         is TextView -> {
                             v.textSize = v.sp(8).toFloat()
                             v.minWidth = v.dip(30)
+                            v.background = DrawableBuilder()
+                                    .rectangle()
+                                    .hairlineBordered()
+                                    .strokeColor(Color.BLACK)
+                                    .strokeColorPressed(Color.BLUE)
+                                    .ripple().height(80)
+                                    .build()
                         }
                     }
                 }

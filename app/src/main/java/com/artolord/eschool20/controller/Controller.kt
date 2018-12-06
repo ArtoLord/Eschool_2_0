@@ -1,6 +1,7 @@
 package com.artolord.eschool20.controller
 
 import android.content.Context
+import android.util.Log
 import com.artolord.eschool20.routing.Constants
 import com.artolord.eschool20.routing.Interfaces.Callback
 import com.artolord.eschool20.routing.Route
@@ -113,4 +114,22 @@ object Controller {
     }
 
     fun getPeriod() = (periodList.getOrNull(0)?.periodId) ?: 0
+
+    fun getOverMark(periodId : Int, unitId : Int) : Double {
+        val marks = marksList[periodId]?.filter { it.unitId == unitId } ?: listOf()
+//        val sum = marks.sumByDouble { it.markVal * it.mktWt }
+//        val kSum = marks.sumByDouble { it.mktWt }
+        var sum = 0.0
+        var kSum = 0.0
+        marks.forEach {
+            if (it.markVal > 0.5) {
+                kSum += it.mktWt
+                sum += it.mktWt * it.markVal
+            }
+            Log.d("Logger11", "${it.mktWt} ${it.markVal}")
+
+        }
+        Log.d("Logger10", "$kSum $sum")
+        return if (sum / kSum > 0.5) sum / kSum else 0.0
+    }
 }
