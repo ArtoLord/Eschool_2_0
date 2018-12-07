@@ -103,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
             onLoginFailed()
     }
 
-    private fun onPeriodListCallback(callback: ArrayList<Period>) {
+    private fun onPeriodListCallback(callback: List<Period>) {
         startActivity<MarksActivity>()
     }
 }
