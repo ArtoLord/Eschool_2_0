@@ -3,6 +3,9 @@ package com.artolord.eschool20.routing;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public  class Constants {
     public static String computeHash(String input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -29,5 +32,17 @@ public  class Constants {
     public final static Integer UnitError  = 4;
     public final static Integer CookieError  = 5;
     public final static Integer MarkError  = 5;
+    public static Date convertToDate(String preDate){
+        //2018-09-01T00:00:00
+        SimpleDateFormat parse = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+        String[] newString = preDate.split("T");
+        String s = newString[0]+" "+newString[1];
+        try {
+            return parse.parse(s);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

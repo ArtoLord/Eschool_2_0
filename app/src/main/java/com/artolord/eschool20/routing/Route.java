@@ -3,6 +3,7 @@ package com.artolord.eschool20.routing;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 import android.util.Pair;
 
@@ -22,6 +23,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -147,6 +149,8 @@ public class Route {
                         //Log.e("",json.toString());
                         for (int i = 0;i<json.length();i++){
                             Period period = new Period();
+                            period.date1 = new Date(json.getJSONObject(i).getLong("date1"));
+                            period.date2 = new Date(json.getJSONObject(i).getLong("date2"));
                             period.periodId = json.getJSONObject(i).getInt("id");
                             period.isStudy = json.getJSONObject(i).getBoolean("study");
                             period.periodName = json.getJSONObject(i).getString("name");
@@ -227,6 +231,21 @@ public class Route {
                             mark.subject = array.getJSONObject(i).getString("subject");}
                             catch (Exception e){
                                 mark.subject = "";
+                            }
+                            mark.startDate = Constants.convertToDate(array.getJSONObject(i).getString("startDt"));
+                            try{
+                                mark.markDate = Constants.convertToDate(array.getJSONObject(i).getString("markDate"));
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+
+                            }
+                            try{
+                                mark.lptColor = "#"+array.getJSONObject(i).getString("lptColor");
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+
                             }
                             try{
                                 mark.markVal = array.getJSONObject(i).getInt("markVal");}
