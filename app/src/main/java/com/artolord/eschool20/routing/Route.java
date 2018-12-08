@@ -293,28 +293,15 @@ public class Route {
         editor.commit();
 
     }
+    public void delete(Context ctx){
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(Constants.AppPref,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+    }
     public boolean isCookieNull(){
         return cookie==null;
     }
 
-    public ArrayList<Pair<String,Double>> meanMarks(ArrayList<Unit> unitArrayList,ArrayList<Mark> markArrayList){
-        ArrayList<Pair<String,Double>> returnArray  = new ArrayList<>();
-        HashMap<Integer, Triple<Integer,Double,Double>> hashMap = new HashMap<>();
-        for (Mark c:markArrayList) {
-            if (!hashMap.containsKey(c.unitId)){
-                hashMap.put(c.unitId,new Triple<Integer, Double, Double>(c.markVal,c.mktWt,c.markVal+0.));
-            }
-            else{
-                Triple<Integer,Double,Double> triple = hashMap.remove(c.unitId);
-                hashMap.put(c.unitId,
-                        new Triple<Integer, Double, Double>(c.markVal + triple.component1(),
-                        c.mktWt+triple.component2(),
-                        (c.markVal + triple.component1())/(c.mktWt+triple.component2())));
-            }
-        }
-        for (Unit c:unitArrayList) {
-            returnArray.add(Pair.create(c.unitName,hashMap.get(c.unitId).component3()));
-        }
-        return returnArray;
-    }
+
 }

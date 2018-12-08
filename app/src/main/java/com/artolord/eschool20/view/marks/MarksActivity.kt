@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.widget.Toast
 import com.artolord.eschool20.R
+import com.artolord.eschool20.controller.Controller
+import com.artolord.eschool20.view.LoginActivity
 import kotlinx.android.synthetic.main.main_activity.*
+import org.jetbrains.anko.startActivity
 
 class MarksActivity : AppCompatActivity() {
     private val marksFragment = MarksFragment()
@@ -25,6 +29,12 @@ class MarksActivity : AppCompatActivity() {
             navigation_view.menu.findItem(lastId).isChecked = false
             menuItem.isChecked = true
             lastId = menuItem.itemId
+            when (lastId){
+                R.id.exit -> {
+                    Controller.route.delete(this)
+                    startActivity<LoginActivity>()
+                }
+            }
             drawer_layout.closeDrawers()
 
             true
@@ -45,5 +55,9 @@ class MarksActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 }

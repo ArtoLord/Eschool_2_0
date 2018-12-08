@@ -105,5 +105,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onPeriodListCallback(callback: List<Period>) {
         startActivity<MarksActivity>()
+        finish()
     }
 }
