@@ -16,11 +16,13 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.toast
 import top.defaults.drawabletoolbox.DrawableBuilder
+import java.util.*
 
 class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var currentPeriod: Int = Controller.getPeriod()
     private lateinit var table : TableLayout
+    private lateinit var marksTable : TableLayout
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -41,8 +43,12 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     onItemSelectedListener = this@MarksFragment
                 }
                 scrollView {
-                    horizontalScrollView {
+                    linearLayout() {
+                        orientation = LinearLayout.HORIZONTAL
                         table = tableLayout {}
+                        horizontalScrollView {
+                            marksTable = tableLayout {}
+                        }
                     }
                 }
 
@@ -52,6 +58,7 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun updateList() {
         table.removeAllViews()
+        marksTable.removeAllViews()
         Controller.getMarks(currentPeriod).groupBy { it.unitId }.forEach {
             val unit = Controller.unitByUnitId[it.key ?: 0]
             if (unit != null) {
@@ -60,6 +67,12 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         textView {
                             text = unit.unitName
                         }
+                    }
+                }.applyRecursively { v ->
+                    formatCell(v)
+                }
+                marksTable.apply {
+                    tableRow {
                         textView {
                             val overMark = Controller.getOverMark(currentPeriod, unit.unitId)
                             text = "%.2f".format(overMark)
@@ -74,19 +87,7 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         }
                     }
                 }.applyRecursively { v ->
-                    when (v) {
-                        is TextView -> {
-                            v.textSize = v.sp(8).toFloat()
-                            v.minWidth = v.dip(30)
-                            v.background = DrawableBuilder()
-                                    .rectangle()
-                                    .hairlineBordered()
-                                    .strokeColor(Color.BLACK)
-                                    .strokeColorPressed(Color.BLUE)
-                                    .ripple().height(80)
-                                    .build()
-                        }
-                    }
+                    formatCell(v)
                 }
             }
         }
@@ -112,5 +113,21 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         currentPeriod = Controller.periodList[p2].periodId
         Controller.uploadUnits(currentPeriod, ::onUnitCallback, ::onFailed)
+    }
+
+    fun formatCell(v : View) {
+        when (v) {
+            is TextView -> {
+                v.textSize = v.sp(8).toFloat()
+                v.minWidth = v.dip(30)
+                v.background = DrawableBuilder()
+                        .rectangle()
+                        .hairlineBordered()
+                        .strokeColor(Color.BLACK)
+                        .strokeColorPressed(Color.BLUE)
+                        .ripple().height(80)
+                        .build()
+            }
+        }
     }
 }
